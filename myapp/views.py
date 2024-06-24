@@ -6,6 +6,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.http import FileResponse
 import logging
+from django.http import JsonResponse
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -61,3 +62,7 @@ def decompose_to_drums(request):
 @api_view(['POST'])
 def decompose_to_others(request):
     return decompose(request, 'others')
+
+def get_song(request, index, song_id):
+    file_url = 'music/{index}/{song_id}.mp3'
+    return JsonResponse({'file_url': file_url})
