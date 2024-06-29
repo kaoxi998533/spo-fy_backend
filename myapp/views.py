@@ -4,8 +4,9 @@ import shlex
 import tempfile
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponseNotFound
 import logging
+from django.http import JsonResponse
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -61,3 +62,11 @@ def decompose_to_drums(request):
 @api_view(['POST'])
 def decompose_to_others(request):
     return decompose(request, 'others')
+
+@api_view(['POST'])
+def get_song(request, index, song_id):
+    song_path = f'music/songs/{index}/{song_id}.mp3'
+    if(os.path.exists(song_path)):
+        return FileResponse(open(song_path, 'rb'), content_type='audio/mpeg')
+    else:
+        return HttpResponseNotFound('File not found')
