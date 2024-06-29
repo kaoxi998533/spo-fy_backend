@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "dj_rest_auth",
     "dj_rest_auth.registration",
+    "allauth.socialaccount.providers.google",
 ]
 
 MIDDLEWARE = [
@@ -144,16 +145,47 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_UNIQUE_EMAIL = True
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
     ]
 }
-EMAIL_HOST = "smtp-relay.brevo.com"                    # smtp-relay.sendinblue.com
-EMAIL_USE_TLS = False                               # False
-EMAIL_PORT = "587"  
-EMAIL_HOST_USER = "kaoxi998533@gmail.com"               # your email address
-EMAIL_HOST_PASSWORD = "river0605"       # your password
-DEFAULT_FROM_EMAIL = "777cd5001@smtp-brevo.com"    # email ending with @sendinblue.com
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp-relay.brevo.com"
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "777cd5001@smtp-brevo.com"
+EMAIL_HOST_PASSWORD = "tjNC0hnMq79pI1gX"  # Replace with your actual Brevo SMTP password
+DEFAULT_FROM_EMAIL = "kaoxi998533@gmail.com"
+
+# The below two settings need to be changed to other urls in actual
+# implementation. Probably change to the ip address of some page stored in the
+# server to indicate the process.
+
+# <EMAIL_CONFIRM_REDIRECT_BASE_URL>/<key>
+EMAIL_CONFIRM_REDIRECT_BASE_URL = \
+    "http://10.211.55.5:8000/email/confirm/"
+
+# <PASSWORD_RESET_CONFIRM_REDIRECT_BASE_URL>/<uidb64>/<token>/
+PASSWORD_RESET_CONFIRM_REDIRECT_BASE_URL = \
+    "http://10.211.55.5:8000/password-reset/confirm/"
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "APP": {
+            "client_id": "<your google client id>",  # replace me
+            "secret": "<your google secret>",        # replace me
+            "key": "",                               # leave empty
+        },
+        "SCOPE": [
+            "profile",
+            "email",
+        ],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+        },
+        "VERIFIED_EMAIL": True,
+    },
+}
