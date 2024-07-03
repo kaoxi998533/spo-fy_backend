@@ -72,3 +72,11 @@ def get_song(request, index, song_id):
         return FileResponse(open(song_path, 'rb'), content_type='audio/mpeg')
     else:
         return HttpResponseNotFound('File not found')
+
+@api_view(['GET'])
+def get_album_cover(request, album_id):
+    album_path = f'album_covers/{album_id}.jpg'
+    if(os.path.exists(album_path)):
+        return FileResponse(open(album_path, 'rb'), content_type='image/jpeg')
+    else:
+        return HttpResponseNotFound('File not found')
