@@ -7,6 +7,8 @@ from rest_framework.response import Response
 from django.http import FileResponse, HttpResponseNotFound
 import logging
 from django.http import JsonResponse
+from .models import *
+import random
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -80,3 +82,30 @@ def get_album_cover(request, album_id):
         return FileResponse(open(album_path, 'rb'), content_type='image/jpeg')
     else:
         return HttpResponseNotFound('File not found')
+
+@api_view(['GET'])
+def load_from_database(request, type):
+    try:
+        if type == 'albums':
+            albums = Album.objects.all().values('name', 'album_id', 'artist_name')
+            data = [{"name": album["name"], "album_id": album["album_id"], "artist_name": album["artist_name"]} for album in albums]
+            return JsonResponse(data, safe=False)
+        
+        elif type == 'artists':
+            artist_names = Song.objects.values_list('artist_name', flat=True).distinct()
+            data = [{"artist_name": name} for name in artist_names]
+            return JsonResponse(data, safe=False)
+        
+        elif type == 'songs':
+            songs = Song.objects.all().values('song_id', 'duration', 'name', 'album_id', 'artist_name')
+            data = [{'song_id': song['song_id'], 'duration': song['duration'], 'name': song['name'], 
+                     'album_id': song['album_id'], 'artist_name' : song['artist_name']} for song in songs]
+            return JsonResponse(data, safe=False)
+        
+        else:
+            return JsonResponse({"error": "Invalid type parameter"}, status=400)
+    
+    except Exception as e:
+        print(str(e))
+        return JsonResponse({"error": str(e)}, status=500)
+

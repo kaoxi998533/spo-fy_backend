@@ -8,5 +8,6 @@ urlpatterns = [
     path('decompose/to_others/<song_id>', decompose_to_others),
     path('get_song/<index>/<song_id>', get_song),
     path('get_album_cover/<album_id>', get_album_cover),
+    path('db/load_from_database/<type>', load_from_database),
 ]
 
