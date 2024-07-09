@@ -1,5 +1,13 @@
-from django.urls import path
+from django.urls import path, include
 from .views import *
+from rest_framework.routers import DefaultRouter
+from .views import CommentViewSet
+
+
+router = DefaultRouter()
+router.register(r'comments', CommentViewSet)
+router.register(r'users', UserViewSet)
+router.register(r'followers', FollowerViewSet)
 
 urlpatterns = [
     path('decompose/to_vocals/<song_id>', decompose_to_vocals),
@@ -9,5 +17,6 @@ urlpatterns = [
     path('get_song/<index>/<song_id>', get_song),
     path('get_album_cover/<album_id>', get_album_cover),
     path('db/load_from_database/<type>', load_from_database),
+    path('', include(router.urls))
 ]
 

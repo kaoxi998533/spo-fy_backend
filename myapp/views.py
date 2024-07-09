@@ -2,13 +2,18 @@ import os
 import demucs.separate
 import shlex
 import tempfile
-from rest_framework.decorators import api_view
+from rest_framework import viewsets, permissions
+from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
 from django.http import FileResponse, HttpResponseNotFound
 import logging
 from django.http import JsonResponse
 from .models import *
 import random
+from .serializers import CommentSerializer
+from django.contrib.auth.models import User
+from accounts.models import Follower
+from myapp.serializers import UserSerializer, FollowerSerializer, VideoSerializer, LikeSerializer
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -109,3 +114,47 @@ def load_from_database(request, type):
         print(str(e))
         return JsonResponse({"error": str(e)}, status=500)
 
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class FollowerViewSet(viewsets.ModelViewSet):
+    queryset = Follower.objects.all()
+    serializer_class = FollowerSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class VideoViewSet(viewsets.ModelViewSet):
+    queryset = Video.objects.all()
+    serializer_class = VideoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    @action(detail=True, methods=['get'], permission_classes=[permissions.IsAuthenticated]) 
+    def comments(self, request, pk=None):
+        video = self.get_object()
+        comments = Comment.objects.filter(video=video)
+        serializer = CommentSerializer(comments, many=True)
+        return Response(serializer.data)
+        
+        
+
+class LikeViewSet(viewsets.ModelViewSet):
+    queryset = Like.objects.all()
+    serializer_class = LikeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
