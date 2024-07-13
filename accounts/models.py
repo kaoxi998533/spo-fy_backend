@@ -2,12 +2,21 @@ from django.contrib.auth.models import User
 from django.db import models
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True, null=True)
     portrait_path = models.TextField(max_length=255,)
+    verification_code = models.CharField(max_length=6, blank=True, null=True)
+    username = models.CharField(max_length=20, blank=True, null=True)
 
     def __str__(self):
         return self.user.username
+    
+def create_profile(sender, instance, created, **kwargs):
+        if created:
+            Profile.objects.get_or_create(user=instance)
+
+models.signals.post_save.connect(create_profile, sender=User)
+
 
 class Follower(models.Model):
     user_from = models.ForeignKey(User, related_name='following', on_delete=models.CASCADE)

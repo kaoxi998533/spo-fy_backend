@@ -35,7 +35,7 @@ class Video(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 class Comment(models.Model):
-    video = models.ForeignKey(Video, related_name='comments')
+    video = models.ForeignKey(Video, related_name='comments', on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateField(auto_now_add=True)
@@ -44,7 +44,7 @@ class Comment(models.Model):
         return f'comment by {self.user.username}'
 
 class Like(models.Model):
-    video = models.ForeignKey(Video, related_name='likes', on_delete=models.CASCADE)
+    video = models.ForeignKey(Video, related_name='video_likes', on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 

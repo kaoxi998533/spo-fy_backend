@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-zlr7zyc261u=l-osh)!4$7+6(jrj$+g9i0!&n!ngg856q85crc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.1','192.168.1.58', '192.168.2.169', '192.168.2.128', '10.211.55.5', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['192.168.1.3','192.168.1.1','192.168.1.58', '192.168.2.169', '192.168.2.128', '10.211.55.5', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -100,15 +100,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
 ]
 
 
@@ -142,10 +133,10 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'optional'  
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'  
 ACCOUNT_UNIQUE_EMAIL = True
-
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
@@ -154,11 +145,12 @@ REST_FRAMEWORK = {
 }
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
 EMAIL_HOST = "smtp-relay.brevo.com"
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = "777cd5001@smtp-brevo.com"
-EMAIL_HOST_PASSWORD = "tjNC0hnMq79pI1gX"  # Replace with your actual Brevo SMTP password
+EMAIL_HOST_PASSWORD = "tjNC0hnMq79pI1gX"  
 DEFAULT_FROM_EMAIL = "kaoxi998533@gmail.com"
 
 # The below two settings need to be changed to other urls in actual
@@ -173,20 +165,4 @@ EMAIL_CONFIRM_REDIRECT_BASE_URL = \
 PASSWORD_RESET_CONFIRM_REDIRECT_BASE_URL = \
     "http://10.211.55.5:8000/password-reset/confirm/"
 
-SOCIALACCOUNT_PROVIDERS = {
-    "google": {
-        "APP": {
-            "client_id": "<your google client id>",  # replace me
-            "secret": "<your google secret>",        # replace me
-            "key": "",                               # leave empty
-        },
-        "SCOPE": [
-            "profile",
-            "email",
-        ],
-        "AUTH_PARAMS": {
-            "access_type": "online",
-        },
-        "VERIFIED_EMAIL": True,
-    },
-}
+
