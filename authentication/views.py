@@ -1,14 +1,12 @@
 # myapp/views.py
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from django.http import JsonResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from accounts.models import Profile
 from django.core.mail import send_mail
-from myapp.serializers import UserSerializer
 import random
 import string
 from .models import TmpUser

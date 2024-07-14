@@ -3,6 +3,7 @@ import demucs.separate
 import shlex
 import tempfile
 from rest_framework import viewsets, permissions
+from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
 from django.http import FileResponse, HttpResponseNotFound
@@ -14,6 +15,7 @@ from .serializers import CommentSerializer
 from django.contrib.auth.models import User
 from accounts.models import Follower
 from myapp.serializers import UserSerializer, FollowerSerializer, VideoSerializer, LikeSerializer
+from django.shortcuts import get_object_or_404
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -129,6 +131,11 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def retrieve(self, request, pk=None):
+        user_id = Token.objects.get(key=request.auth.key).user_id
+        user = User.objects.get(id=user_id)
+        return Response(self.serializer_class(user).data)
+
 class FollowerViewSet(viewsets.ModelViewSet):
     queryset = Follower.objects.all()
     serializer_class = FollowerSerializer
@@ -142,12 +149,20 @@ class VideoViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-    @action(detail=True, methods=['get'], permission_classes=[permissions.IsAuthenticated]) 
+    @action(detail=True, methods=['get'], permission_classes=[permissions.IsAuthenticated], url_name='get_comments') 
     def comments(self, request, pk=None):
         video = self.get_object()
         comments = Comment.objects.filter(video=video)
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
+    
+    @action(detail=True, methods=['get'], permission_classes=[permissions.IsAuthenticated], url_name='get_videos_for_user') 
+    def get_videos_for_user(self, request, *args, **kwargs):
+        user_id = Token.objects.get(key=request.auth.key).user_id
+        user = User.objects.get(id=user_id)
+        videos = Video.objects.filter(user=user)
+        return Response(self.serializer_class(videos, many=True).data)
+        
         
         
 

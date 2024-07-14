@@ -1,10 +1,6 @@
 # authentication/urls.py
 
 from django.urls import path
-from dj_rest_auth.registration.views import (
-    ResendEmailVerificationView,
-    RegisterView
-)
 from dj_rest_auth.views import (
     LoginView,
     LogoutView,
