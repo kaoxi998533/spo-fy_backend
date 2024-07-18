@@ -2,6 +2,7 @@ import os
 import demucs.separate
 import shlex
 import tempfile
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import viewsets, permissions
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, action
@@ -14,7 +15,7 @@ import random
 from .serializers import CommentSerializer
 from django.contrib.auth.models import User
 from accounts.models import Follower
-from myapp.serializers import UserSerializer, FollowerSerializer, VideoSerializer, LikeSerializer
+from myapp.serializers import UserSerializer, FollowerSerializer, VideoSerializer, LikeSerializer, ArtistSerializer
 from django.shortcuts import get_object_or_404
 
 # Configure logging
@@ -145,9 +146,21 @@ class VideoViewSet(viewsets.ModelViewSet):
     queryset = Video.objects.all()
     serializer_class = VideoSerializer
     permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser] 
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    def create(self, request, *args, **kwargs):
+        user_id = Token.objects.get(key=self.request.auth.key).user_id
+
+        user = User.objects.get(id=user_id)
+        video_data = request.data.copy()
+        video_data['user'] = user_id
+
+        serializer = self.get_serializer(data=video_data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        return Response(serializer.data, status=201)
+
 
     @action(detail=True, methods=['get'], permission_classes=[permissions.IsAuthenticated], url_name='get_comments') 
     def comments(self, request, pk=None):
@@ -156,14 +169,12 @@ class VideoViewSet(viewsets.ModelViewSet):
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
     
-    @action(detail=True, methods=['get'], permission_classes=[permissions.IsAuthenticated], url_name='get_videos_for_user') 
-    def get_videos_for_user(self, request, *args, **kwargs):
-        user_id = Token.objects.get(key=request.auth.key).user_id
-        user = User.objects.get(id=user_id)
-        videos = Video.objects.filter(user=user)
-        return Response(self.serializer_class(videos, many=True).data)
-        
-        
+    @action(detail=True, methods=['get'], permission_classes=[permissions.IsAuthenticated], url_name='get_videos_by_user') 
+    def get_videos_by_user(self, request, *args, **kwargs):
+        user_videos = Video.objects.filter(user=request.user)
+        serializer = VideoSerializer(user_videos, many=True)
+        return Response(serializer.data)
+
         
 
 class LikeViewSet(viewsets.ModelViewSet):
@@ -171,5 +182,8 @@ class LikeViewSet(viewsets.ModelViewSet):
     serializer_class = LikeSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        
+class ArtistViewSet(viewsets.ModelViewSet):
+    queryset = Artist.objects.all()
+    serializer_class = ArtistSerializer
+    permission_classes = [permissions.IsAdminUser]

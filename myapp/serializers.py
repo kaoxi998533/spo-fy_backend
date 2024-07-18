@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from accounts.models import Profile, Follower
-from .models import Comment, Video, Like
+from .models import Comment, Video, Like, Artist
 
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source = 'user.username')
@@ -14,7 +14,7 @@ class CommentSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ['bio', 'portrait_path', 'username']
+        fields = ['bio', 'portrait_path',  'username']
 
 class FollowerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,18 +28,17 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'profile', 'followers', 'following']
+        fields = ['id', 'email', 'profile', 'followers', 'following']
     
     def create(self, validated_data):
         user = User(
             email=validated_data['email'],
-            username=validated_data['username']
+            username=validated_data['email']
         )
         user.set_password(validated_data['password'])
         user.save()
         return user
 
-    # these two functions below might not be necessary
     def get_followers(self, obj):
         followers = Follower.objects.filter(user_to=obj)
         return FollowerSerializer(followers, many=True).data
@@ -52,12 +51,13 @@ class UserSerializer(serializers.ModelSerializer):
         profile_data = validated_data.pop('profile', {})
         profile = instance.profile
 
-        instance.username = validated_data.get('username', instance.username)
-        instance.email = validated_data.get('email', instance.email)
-        instance.save()
+        if validated_data.get('username'): 
+            profile.username = validated_data.get('username', instance.username)
+            profile.save()
 
-        profile.bio = profile_data.get('bio', profile.bio)
-        profile.save()
+        if validated_data.get('bio'):
+            profile.bio = profile_data.get('bio', profile.bio)
+            profile.save()
 
         return instance
 
@@ -67,9 +67,18 @@ class VideoSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Video
-        fields = ['id', 'song', 'user', 'title', 'description', 'video_path', 'duration', 'likes', 'created_at']
+        fields = ['id', 'song', 'user', 'title', 'likes_count', 'description', 'video_path', 'duration', 'created_at', 'comments']
+
+    def get_likes_count(self, obj):
+        return Like.objects.filter(video=obj).count()
+    
 
 class LikeSerializer(serializers.ModelSerializer):
     class Meta:
        model = Like
        fields = ['id', 'video', 'user', 'created_at']
+
+class ArtistSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Artist
+        fields = '__all__'

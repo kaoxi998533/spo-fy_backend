@@ -88,7 +88,7 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'spo++fy_database.db',
+        'NAME': '/home/parallels/myproject/new_spo++fy_database.db'
     }
 }
 
