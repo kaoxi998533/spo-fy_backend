@@ -95,8 +95,8 @@ def get_album_cover(request, album_id):
 def load_from_database(request, type):
     try:
         if type == 'albums':
-            albums = Album.objects.all().values('name', 'album_id', 'artist_name')
-            data = [{"name": album["name"], "album_id": album["album_id"], "artist_name": album["artist_name"]} for album in albums]
+            albums = list(Album.objects.all())
+            data = [{"name": album.name, "album_id": album.id, "artist_name": album.artist_name} for album in albums]
             return JsonResponse(data, safe=False)
         
         elif type == 'artists':
@@ -105,9 +105,9 @@ def load_from_database(request, type):
             return JsonResponse(data, safe=False)
         
         elif type == 'songs':
-            songs = Song.objects.all().values('song_id', 'duration', 'name', 'album_id', 'artist_name')
-            data = [{'song_id': song['song_id'], 'duration': song['duration'], 'name': song['name'], 
-                     'album_id': song['album_id'], 'artist_name' : song['artist_name']} for song in songs]
+            songs = list(Song.objects.all())
+            data = [{'song_id': song.id, 'duration': song.duration, 'name': song.name, 
+                     'album_id': song.album.id, 'artist_name' : song.artist_name} for song in songs]
             return JsonResponse(data, safe=False)
         
         else:
