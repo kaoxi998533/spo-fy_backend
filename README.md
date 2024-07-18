@@ -58,7 +58,7 @@ git clone https://github.com/kaoxi998533/spo-fy_backend
 Step 2: Active a new virtual environment and install the required dependencies at the project root directory
 
 ```
-virtualenv .env && source .env/bin/activate && pip install -r requirements.txt
+python -m venv .env && source .env/bin/activate && pip install -r requirements.txt
 ```
 Step 3: In myproject/settings.py, check if your ip address for the machine as host is included, do include it if it is not
 
