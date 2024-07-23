@@ -1,9 +1,10 @@
+from json import JSONDecoder
 import os
 import demucs.separate
 import shlex
 import tempfile
 from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
@@ -15,8 +16,9 @@ import random
 from .serializers import CommentSerializer
 from django.contrib.auth.models import User
 from accounts.models import Follower
-from myapp.serializers import UserSerializer, FollowerSerializer, VideoSerializer, LikeSerializer, ArtistSerializer
+from myapp.serializers import UserSerializer, FollowerSerializer, VideoSerializer, LikeSerializer, ArtistSerializer, ProfileSerializer
 from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import NotFound
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -187,3 +189,37 @@ class ArtistViewSet(viewsets.ModelViewSet):
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
     permission_classes = [permissions.IsAdminUser]
+
+class ProfileViewSet(viewsets.ModelViewSet):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = [permissions.AllowAny]
+    lookup_field = 'user__email'
+    def retrieve(self, request, pk=None):
+        profile = Profile.objects.get(pk=pk)
+        return self.serializer_class(data=profile).data
+        
+    def partial_update(self, request, pk=None):
+        try:
+            user = Profile.objects.get(user__email=pk)
+            serialized_updated_data = self.serializer_class(user, data=request.data, partial=True)
+            serialized_updated_data.is_valid(raise_exception=True)
+            serialized_updated_data.save()
+            return Response(serialized_updated_data.data)
+        except Exception as e:
+            return Response({'error' : str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(methods=['patch'], detail=False,
+            url_path='update_by_email/(?P<email>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,})')
+    def update_by_email(self, request, email):
+        profile = Profile.objects.get(user__email=email)
+        serialized_updated_data = self.serializer_class(profile, data=request.data, partial=True)
+        serialized_updated_data.is_valid(raise_exception=True)
+        serialized_updated_data.save()
+        return Response(serialized_updated_data.data)
+
+    
+        
+    
+def error404(request, exception):
+    raise NotFound(detail="Error 404, page not found", code=404)

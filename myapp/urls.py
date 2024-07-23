@@ -1,7 +1,6 @@
 from django.urls import path, include
 from .views import *
 from rest_framework.routers import DefaultRouter
-from .views import CommentViewSet, LikeViewSet, UserViewSet, FollowerViewSet
 
 
 router = DefaultRouter()
@@ -10,6 +9,8 @@ router.register(r'users', UserViewSet)
 router.register(r'followers', FollowerViewSet)
 router.register(r'videos', VideoViewSet)
 router.register(r'likes', LikeViewSet)
+router.register(r'profiles', ProfileViewSet)
+
 
 urlpatterns = [
     path('decompose/to_vocals/<song_id>', decompose_to_vocals),
