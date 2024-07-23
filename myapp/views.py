@@ -199,16 +199,6 @@ class ProfileViewSet(viewsets.ModelViewSet):
         profile = Profile.objects.get(pk=pk)
         return self.serializer_class(data=profile).data
         
-    def partial_update(self, request, pk=None):
-        try:
-            user = Profile.objects.get(user__email=pk)
-            serialized_updated_data = self.serializer_class(user, data=request.data, partial=True)
-            serialized_updated_data.is_valid(raise_exception=True)
-            serialized_updated_data.save()
-            return Response(serialized_updated_data.data)
-        except Exception as e:
-            return Response({'error' : str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
     @action(methods=['patch'], detail=False,
             url_path='update_by_email/(?P<email>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,})')
     def update_by_email(self, request, email):

@@ -33,7 +33,9 @@ class CustomRegisterView(APIView):
                 return Response({'error' : 'The email has already been registered' }, status=status.HTTP_400_BAD_REQUEST)
 
             user = User.objects.create(email=tmp_user.email, username=tmp_user.email, is_active=True)
-            Profile.objects.get(user=user).username = username
+            profile = Profile.objects.get(user=user)
+            profile.username = username
+            profile.save()
             user.set_password(password)
             user.save()
                 
