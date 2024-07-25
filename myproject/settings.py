@@ -12,8 +12,16 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+   
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # Quick-start development settings - unsuitable for production
@@ -25,7 +33,9 @@ SECRET_KEY = 'django-insecure-zlr7zyc261u=l-osh)!4$7+6(jrj$+g9i0!&n!ngg856q85crc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['192.168.1.3','192.168.1.1','192.168.1.58', '192.168.2.169', '192.168.2.128', '10.211.55.5', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['192.168.1.3','192.168.1.1','192.168.1.58', 
+                 '192.168.2.169', '192.168.2.128', '10.211.55.5', 'localhost', '127.0.0.1']
+
 
 
 # Application definition

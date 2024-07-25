@@ -1,7 +1,8 @@
 from django.urls import path, include
 from .views import *
 from rest_framework.routers import DefaultRouter
-
+from myproject import settings
+from django.conf.urls.static import static
 
 router = DefaultRouter()
 router.register(r'comments', CommentViewSet)
@@ -21,5 +22,5 @@ urlpatterns = [
     path('get_album_cover/<album_id>', get_album_cover),
     path('db/load_from_database/<type>', load_from_database),
     path('', include(router.urls))
-]
+] 
 

@@ -1,3 +1,4 @@
+from ctypes import sizeof
 from json import JSONDecoder
 import os
 import demucs.separate
@@ -138,7 +139,7 @@ class UserViewSet(viewsets.ModelViewSet):
         user_id = Token.objects.get(key=request.auth.key).user_id
         user = User.objects.get(id=user_id)
         return Response(self.serializer_class(user).data)
-
+    
 class FollowerViewSet(viewsets.ModelViewSet):
     queryset = Follower.objects.all()
     serializer_class = FollowerSerializer
@@ -147,7 +148,7 @@ class FollowerViewSet(viewsets.ModelViewSet):
 class VideoViewSet(viewsets.ModelViewSet):
     queryset = Video.objects.all()
     serializer_class = VideoSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     parser_classes = [MultiPartParser, FormParser] 
 
     def create(self, request, *args, **kwargs):
@@ -171,13 +172,13 @@ class VideoViewSet(viewsets.ModelViewSet):
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
     
-    @action(detail=True, methods=['get'], permission_classes=[permissions.IsAuthenticated], url_name='get_videos_by_user') 
-    def get_videos_by_user(self, request, *args, **kwargs):
-        user_videos = Video.objects.filter(user=request.user)
-        serializer = VideoSerializer(user_videos, many=True)
-        return Response(serializer.data)
-
-        
+    @action(detail=False, methods=['get'], permission_classes=[permissions.AllowAny], url_name='get_videos_by_user')
+    def get_videos_by_user(self, request):
+        user_id = request.query_params.get('user_id')
+        user = get_object_or_404(User, id=user_id)
+        videos = Video.objects.filter(user=user)
+        serializer = self.get_serializer(videos, many=True)
+        return Response(serializer.data)        
 
 class LikeViewSet(viewsets.ModelViewSet):
     queryset = Like.objects.all()
@@ -196,11 +197,13 @@ class ProfileViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]
     lookup_field = 'user__email'
     def retrieve(self, request, pk=None):
-        profile = Profile.objects.get(pk=pk)
+        user_id = Token.objects.get(key=request.auth.key).user_id
+        user = User.objects.get(id=user_id)
+        profile = Profile.objects.get(pk=user)
         return self.serializer_class(data=profile).data
         
     @action(methods=['patch'], detail=False,
-            url_path='update_by_email/(?P<email>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,})')
+            url_path='update_by_email/(?P<email>[\w.%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}),')
     def update_by_email(self, request, email):
         profile = Profile.objects.get(user__email=email)
         serialized_updated_data = self.serializer_class(profile, data=request.data, partial=True)

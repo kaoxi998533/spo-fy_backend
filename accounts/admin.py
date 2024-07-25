@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Profile, Follower
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'bio', 'portrait_path')
+    list_display = ('user', 'bio', 'portrait')
 
 class FollowerAdmin(admin.ModelAdmin):
     list_display = ('user_from', 'user_to', 'created')

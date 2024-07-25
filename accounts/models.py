@@ -4,7 +4,7 @@ from django.db import models
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     bio = models.TextField(blank=True, null=True)
-    portrait_path = models.TextField(max_length=255,)
+    portrait = models.ImageField(max_length=255, null=True, blank=True)
     verification_code = models.CharField(max_length=6, blank=True, null=True)
     username = models.CharField(max_length=20, blank=True, null=True)
 

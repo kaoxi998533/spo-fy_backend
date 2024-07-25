@@ -103,12 +103,13 @@ class Video(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-    video_path = models.FileField(upload_to='videos')
+    video_file = models.FileField(upload_to='videos')
     duration = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
+    cover_image = models.ImageField(upload_to='videos/cover_images')
 
     def __str__(self) -> str:
-        username = Profile.objects.get(id=self.user).username
+        username = Profile.objects.get(user=self.user).username
         return f'video for {self.song} uploaded by {username} at {str(self.created_at)} titled {self.title}'
 
 class Comment(models.Model):

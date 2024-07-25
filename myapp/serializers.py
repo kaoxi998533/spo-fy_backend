@@ -2,7 +2,13 @@ from rest_framework import serializers
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from accounts.models import Profile, Follower
-from .models import Comment, Video, Like, Artist
+from .models import Comment, Video, Like, Artist, Song
+
+class SongSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Song
+        fields = ['id', 'name', 'artist_name', 'album']
+
 
 class CommentSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source = 'user.username')
@@ -28,7 +34,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'email', 'profile', 'followers', 'following']
+        fields = '__all__'
     
     def create(self, validated_data):
         user = User(
@@ -64,10 +70,11 @@ class UserSerializer(serializers.ModelSerializer):
 class VideoSerializer(serializers.ModelSerializer):
     comments = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     likes_count = serializers.SerializerMethodField()
+    song = SongSerializer(read_only=True)
     
     class Meta:
         model = Video
-        fields = ['id', 'song', 'user', 'title', 'likes_count', 'description', 'video_path', 'duration', 'created_at', 'comments']
+        fields = ['id', 'song', 'user', 'title', 'likes_count', 'description', 'video_file', 'duration', 'created_at', 'comments', 'cover_image']
 
     def get_likes_count(self, obj):
         return Like.objects.filter(video=obj).count()
