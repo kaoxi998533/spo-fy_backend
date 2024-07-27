@@ -70,11 +70,10 @@ class UserSerializer(serializers.ModelSerializer):
 class VideoSerializer(serializers.ModelSerializer):
     comments = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     likes_count = serializers.SerializerMethodField()
-    song = SongSerializer(read_only=True)
     
     class Meta:
         model = Video
-        fields = ['id', 'song', 'user', 'title', 'likes_count', 'description', 'video_file', 'duration', 'created_at', 'comments', 'cover_image']
+        fields = '__all__'
 
     def get_likes_count(self, obj):
         return Like.objects.filter(video=obj).count()

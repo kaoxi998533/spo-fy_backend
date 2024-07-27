@@ -151,18 +151,30 @@ class VideoViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]
     parser_classes = [MultiPartParser, FormParser] 
 
+
     def create(self, request, *args, **kwargs):
-        user_id = Token.objects.get(key=self.request.auth.key).user_id
+        try: 
+            print(str(request.data))
+            user_id = Token.objects.get(key=self.request.auth.key).user_id
 
-        user = User.objects.get(id=user_id)
-        video_data = request.data.copy()
-        video_data['user'] = user_id
+            user = User.objects.get(id=user_id)
+            video_data = request.data.copy()
+            video_data['user'] = user_id
 
-        serializer = self.get_serializer(data=video_data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+            # Retrieve the song instance
+            song_id = video_data.get('song')
+            song = get_object_or_404(Song, id=song_id)
+            video_data['song'] = song.id
 
-        return Response(serializer.data, status=201)
+            serializer = self.get_serializer(data=video_data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+
+            return Response(serializer.data, status=201)
+        except Exception as e:
+            print(str(e))
+            print(e.with_traceback())
+            return Response({'error' : str(e)}, status=500)
 
 
     @action(detail=True, methods=['get'], permission_classes=[permissions.IsAuthenticated], url_name='get_comments') 
@@ -179,6 +191,17 @@ class VideoViewSet(viewsets.ModelViewSet):
         videos = Video.objects.filter(user=user)
         serializer = self.get_serializer(videos, many=True)
         return Response(serializer.data)        
+    
+    
+    @action(detail=False, methods=['get'], permission_classes=[permissions.AllowAny], url_name='get_videos_liked_by_user')
+    def get_videos_liked_by_user(self, request):
+        user_id = request.query_params.get('user_id')
+        user = get_object_or_404(User, id=user_id)
+        likes = Like.objects.filter(user=user)
+        videos = Video.objects.filter(id__in=likes.values('video_id'))
+        serializer = self.get_serializer(videos, many=True)
+        return Response(serializer.data)
+    
 
 class LikeViewSet(viewsets.ModelViewSet):
     queryset = Like.objects.all()

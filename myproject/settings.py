@@ -37,6 +37,7 @@ ALLOWED_HOSTS = ['192.168.1.3','192.168.1.1','192.168.1.58',
                  '192.168.2.169', '192.168.2.128', '10.211.55.5', 'localhost', '127.0.0.1']
 
 
+FILE_UPLOAD_MAX_MEMORY_SIZE = 100 * 1024 * 1024 # 10 Mb limit
 
 # Application definition
 

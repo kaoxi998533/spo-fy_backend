@@ -1,0 +1,31 @@
+[2024-07-27 22:29:13 +0800] [325103] [INFO] Starting gunicorn 22.0.0
+[2024-07-27 22:29:13 +0800] [325103] [INFO] Listening at: unix:/home/parallels/myproject/gunicorn.sock (325103)
+[2024-07-27 22:29:13 +0800] [325103] [INFO] Using worker: sync
+[2024-07-27 22:29:13 +0800] [325106] [INFO] Booting worker with pid: 325106
+[2024-07-27 22:29:13 +0800] [325107] [INFO] Booting worker with pid: 325107
+[2024-07-27 14:29:13 +0000] [325106] [INFO] Worker exiting (pid: 325106)
+[2024-07-27 22:29:13 +0800] [325108] [INFO] Booting worker with pid: 325108
+[2024-07-27 22:29:13 +0800] [325103] [ERROR] Worker (pid:325106) exited with code 4
+[2024-07-27 14:29:13 +0000] [325107] [INFO] Worker exiting (pid: 325107)
+[2024-07-27 22:29:13 +0800] [325103] [ERROR] Worker (pid:325107) exited with code 4
+[2024-07-27 14:29:13 +0000] [325108] [INFO] Worker exiting (pid: 325108)
+[2024-07-27 23:13:33 +0800] [333400] [INFO] Starting gunicorn 22.0.0
+[2024-07-27 23:13:33 +0800] [333400] [INFO] Listening at: unix:/home/parallels/myproject/gunicorn.sock (333400)
+[2024-07-27 23:13:33 +0800] [333400] [INFO] Using worker: sync
+[2024-07-27 23:13:33 +0800] [333403] [INFO] Booting worker with pid: 333403
+[2024-07-27 15:13:33 +0000] [333403] [INFO] Worker exiting (pid: 333403)
+[2024-07-27 23:13:33 +0800] [333404] [INFO] Booting worker with pid: 333404
+[2024-07-27 23:13:33 +0800] [333405] [INFO] Booting worker with pid: 333405
+[2024-07-27 23:13:33 +0800] [333400] [ERROR] Worker (pid:333403) exited with code 4
+[2024-07-27 15:13:33 +0000] [333405] [INFO] Worker exiting (pid: 333405)
+[2024-07-27 15:13:33 +0000] [333404] [INFO] Worker exiting (pid: 333404)
+[2024-07-27 23:13:33 +0800] [333400] [ERROR] Worker (pid:333405) exited with code 4
+[2024-07-27 23:19:25 +0800] [335144] [INFO] Starting gunicorn 22.0.0
+[2024-07-27 23:19:25 +0800] [335144] [INFO] Listening at: unix:/home/parallels/myproject/gunicorn.sock (335144)
+[2024-07-27 23:19:25 +0800] [335144] [INFO] Using worker: sync
+[2024-07-27 23:19:25 +0800] [335146] [INFO] Booting worker with pid: 335146
+[2024-07-27 23:19:25 +0800] [335147] [INFO] Booting worker with pid: 335147
+[2024-07-27 15:19:25 +0000] [335146] [INFO] Worker exiting (pid: 335146)
+[2024-07-27 23:19:25 +0800] [335144] [ERROR] Worker (pid:335146) exited with code 4
+[2024-07-27 15:19:25 +0000] [335147] [INFO] Worker exiting (pid: 335147)
+[2024-07-27 23:19:25 +0800] [335144] [ERROR] Worker (pid:335147) exited with code 4
